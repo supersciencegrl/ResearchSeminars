@@ -85,7 +85,7 @@ def newseries(**kwargs):
 def newconference():
     newseries(is_conference = True)
 
-# Can you add title here, I dunno
+# Can you add title and time here, I dunno
 def create_talk(series_id):
     url = 'https://researchseminars.org/api/0/save/talk/'
     payload = {'series_id': series_id}
