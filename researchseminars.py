@@ -3,10 +3,15 @@
 import requests
 import warnings
 
-warnings.simplefilter('ignore', requests.packages.urllib3.exceptions.InsecureRequestWarning) # Hide warnings from verify = False
+import getevents
 
-def get_topics(subject):
+def get_topics(*args):
     # Default subject = 'chem'
+    if args:
+        subject = args[0]
+    else:
+        subject = 'chem'
+
     url = 'https://researchseminars.org/api/0/topics'
     r = requests.get(url, verify = False)
     if r.status_code == 200:
@@ -68,9 +73,11 @@ def create_seminar_series(series_id, name, topics, slots, organizers, eventurl, 
     else:
         print(f'Event creation failed. \n{json}')
 
+    return series_id
+
 def newseries(**kwargs):
-    series_id = input('Series ID (with underscores): ')
-    name = series_id.replace('_', ' ').capitalize()
+    name = input('Series name: ')
+    series_id = name.replace(' ', '_').capitalize()
     topics = input('Topics (comma-separated): ')
     topics = ['chem'] + topics.replace(', ', ',').split(',')
     slots = input('Slots (comma-separated): ')
@@ -101,17 +108,4 @@ def create_talk(series_id):
     else:
         print(f'Talk creation failed. \n{json}')
     
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
+warnings.simplefilter('ignore', requests.packages.urllib3.exceptions.InsecureRequestWarning) # Hide warnings from verify = False
