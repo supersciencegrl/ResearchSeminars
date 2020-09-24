@@ -35,15 +35,11 @@ def lookup_talk(seriesName):
         except TypeError: #NoneType
             print('Talk not found')
 
-def create_seminar_series(name, topics, organizers, eventurl, **kwargs):
+def create_seminar_series(series_id, name, topics, organizers, eventurl, **kwargs):
     if 'is_conference' in kwargs:
         is_conference = kwargs['is_conference']
     else:
         is_conference = False
-
-    series_id = organizers.replace(' ', '_')[:32]
-    if not all([part.isupper() for part in series_id.split('_')]):
-        series_id = series_id.capitalize()
 
     url = 'https://researchseminars.org/api/0/save/series'
     payload = {'series_id': series_id,
@@ -69,7 +65,7 @@ def create_seminar_series(name, topics, organizers, eventurl, **kwargs):
                                'display': True},
                               
                               {'name': 'Nessa Carson',
-                               'email': f'nessa.carson@{domain}',
+                               'email': 'nessa.carson@{domain}',
                                'homepage': 'https://supersciencegrl.co.uk/conferences',
                                'order': 1,
                                #'curator': True,
@@ -94,6 +90,7 @@ def create_seminar_series(name, topics, organizers, eventurl, **kwargs):
 
 def newseries(**kwargs):
     name = input('Series name: ')
+    series_id = name.replace(' ', '_')[:32].capitalize()
     topics = input('Topics (comma-separated): ')
     topics = ['chem'] + topics.replace(', ', ',').split(',')
     #slots = input('Slots (comma-separated): ')
@@ -103,7 +100,7 @@ def newseries(**kwargs):
     if not eventurl.startswith('http'):
         eventurl = 'http://' + eventurl
 
-    r = create_seminar_series(name, topics, organizers, eventurl, **kwargs)
+    r = create_seminar_series(series_id, name, topics, organizers, eventurl, **kwargs)
     return r
 
 def newconference():

@@ -25,9 +25,10 @@ def gettimezone(time_line):
 
 def pullevent(html, startpos):
     htmllist = check_html_is_list(html)
+    print(startpos)
 
     event = {}
-    for n, line in [(m, longline.lstrip()) for m, longline in enumerate(htmllist)]:
+    for n, line in [(m, longline.lstrip()) for m, longline in enumerate(htmllist[startpos:])]:
         if line.startswith('<tr class="covidrow'):
             event = {'linestart': n + startpos, 'enddate': False, 'allday': False}
         # Event dates
@@ -47,7 +48,7 @@ def pullevent(html, startpos):
                 event['allday'] = True
                 event['starttime'] = datetime.datetime.strptime(date, '%a %d/%m/%Y')
             else:
-                wholetime = line.split('<td class="columnb2">')[1].replace('&#8209;', '-')
+                wholetime = line.split('<td class="columnb2">')[1].split(' BST')[0].replace('&#8209;', '-')
                 vstarttime = wholetime.split('&ndash;')[0].split('-')[0].split(' ')[0]
                 if any(('&ndash;' in wholetime, '-' in wholetime)):
                     vendtime = wholetime.split('-')[-1].split('&ndash;')[-1].split(' ')[0]
@@ -64,14 +65,14 @@ def pullevent(html, startpos):
             event['url'] = line.split('<td class="columnb3"><a href="')[1].split('"')[0]
 
             description = []
-            for nextline in [longnextline.strip() for longnextline in htmllist[n+1:]]:
+            for nextline in [longnextline.strip() for longnextline in htmllist[startpos+n+1:]]:
                 if not nextline.startswith('<td'):
                     description.append(nextline.replace('<br>', '\n'))
                 else: # When you reach the end
                     descriptionstring = ('').join(('').join(description).split('</a>'))
                     event['title'] = descriptionstring.split('</a>')[0].split('\n')[0].split(' (')[0]
+                    event['eventtype'] = descriptionstring.split('(')[-1].split(',')[-1].replace('&nbsp;', ' ').replace(')', '')
                     break
-                event['eventtype'] = descriptionstring.split('(')[-1].split(',')[-1].replace('&nbsp;', ' ').replace(')', '')
 
         elif line.startswith('<td class="colummb4'):
             event['organizer'] = line.split('<td class="columnb4">')[1].split('</td>')[0]
@@ -80,7 +81,7 @@ def pullevent(html, startpos):
             event['lineend'] = n + startpos
             break
 
-        return event
+    return event
 
 def allevents(html):
     htmllist = check_html_is_list(html)
@@ -92,7 +93,8 @@ def allevents(html):
         if row.lstrip().startswith('<tr class="covidrow'):
             eventcount += 1
             firsteventfound = True
-            event = pullevent(htmllist[n:], n)
+            event = pullevent(htmllist, n)
+            lod.append(event)
 
         elif row.lstrip().startswith('</tbody>'):
             lasteventfound = True
