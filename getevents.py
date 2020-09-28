@@ -23,7 +23,7 @@ def gettimezone(time_line):
 
     return result
 
-def pullevent(html, startpos):
+def pullwebinar(html, startpos):
     htmllist = check_html_is_list(html)
     print(startpos)
 
@@ -71,10 +71,10 @@ def pullevent(html, startpos):
                 else: # When you reach the end
                     descriptionstring = ('').join(('').join(description).split('</a>'))
                     event['title'] = descriptionstring.split('</a>')[0].split('\n')[0].split(' (')[0]
-                    event['eventtype'] = descriptionstring.split('(')[-1].split(',')[-1].replace('&nbsp;', ' ').replace(')', '')
+                    event['eventtype'] = descriptionstring.split('(')[-1].split(',')[-1].split('</')[0].replace('&nbsp;', ' ').replace(')', '')
                     break
 
-        elif line.startswith('<td class="colummb4'):
+        elif line.startswith('<td class="columnb4'):
             event['organizer'] = line.split('<td class="columnb4">')[1].split('</td>')[0]
 
         elif line.startswith('</tr>'):
@@ -93,12 +93,33 @@ def allevents(html):
         if row.lstrip().startswith('<tr class="covidrow'):
             eventcount += 1
             firsteventfound = True
-            event = pullevent(htmllist, n)
+            event = pullwebinar(htmllist, n)
             lod.append(event)
 
         elif row.lstrip().startswith('</tbody>'):
             lasteventfound = True
     print('Event count:', eventcount)
+
+def getoldevents():
+    url = 'http://supersciencegrl.co.uk/online-old'
+
+    try:
+        with urllib.request.urlopen(url) as response:
+            htmlr = response.readlines()
+    except urllib.error.HTTPError as error:
+        print(error.code, error.read)
+    
+    global html_old
+    html_old = []
+    errors_old = []
+    for h in htmlr:
+        try:
+            html_old.append(h.decode('utf-8'))
+        except UnicodeDecodeError:
+            errors_old.append(h)
+
+    if html_in:
+        print(f'Loaded {url} successfully as html_old.')
 
 # Time zones
 London = tz.gettz('Europe/London')

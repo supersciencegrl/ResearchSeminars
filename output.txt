@@ -1,0 +1,14 @@
+﻿mini-AQN-mix:		5.0 mg K2OsO2(OH)4		123.46 mg mixture per relevant vial
+			27.8 mg (DHQD)2AQN
+			1.339 g K2CO3
+Super mini-AD-mix:	5.0 mg K2OsO2(OH)4		132.86 mg mixture per relevant vial
+			52.9 mg (DHQD)2PHAL
+			563 mg K2CO3
+
+Super mini-AQN-mix:	123.46 mg mini-AQN-mix
+			9.96 mg (DHQD)2AQN
+			0.642 mg K2OsO2(OH)4
+
+Super AQN-mix:		500 mg mini-AQN-mix		134.06 mg mixture per relevant vial
+			40.34 mg (DHQD)2AQN
+			2.600 mg K2OsO2(OH)4
